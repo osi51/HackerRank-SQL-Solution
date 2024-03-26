@@ -1,0 +1,26 @@
+SELECT 
+    S.HKR, 
+    H.NAME, 
+    SUM(S.MSCR) AS SMS
+FROM 
+(
+    SELECT 
+        HACKER_ID AS HKR, 
+        CHALLENGE_ID AS CHL, 
+        MAX(SCORE) AS MSCR
+    FROM 
+        SUBMISSIONS
+    GROUP BY 
+        HACKER_ID, 
+        CHALLENGE_ID
+) S
+LEFT JOIN 
+    HACKERS H ON H.HACKER_ID = S.HKR
+GROUP BY 
+    S.HKR, 
+    H.NAME
+HAVING 
+    SUM(S.MSCR) > 0
+ORDER BY 
+    SMS DESC, 
+    S.HKR ASC;

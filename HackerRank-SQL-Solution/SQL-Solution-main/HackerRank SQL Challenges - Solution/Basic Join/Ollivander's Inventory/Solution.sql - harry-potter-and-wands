@@ -1,0 +1,41 @@
+https://www.hackerrank.com/challenges/harry-potter-and-wands/problem?isFullScreen=true
+
+SELECT 
+    WMN.WID, 
+    MN.AG, 
+    MN.CN, 
+    MN.PWR
+FROM (
+    SELECT 
+        WP.AGE AS AG, 
+        MIN(W.COINS_NEEDED) AS CN, 
+        W.POWER AS PWR
+    FROM 
+        WANDS W
+    INNER JOIN 
+        WANDS_PROPERTY WP ON W.CODE = WP.CODE
+    GROUP BY 
+        WP.AGE, 
+        W.POWER
+    ORDER BY 
+        W.POWER DESC, 
+        WP.AGE DESC
+) MN
+LEFT JOIN (
+    SELECT 
+        WANDS.ID AS WID, 
+        WANDS_PROPERTY.AGE AS WAG, 
+        WANDS.COINS_NEEDED AS WCN, 
+        WANDS_PROPERTY.IS_EVIL AS IE
+    FROM 
+        WANDS 
+    INNER JOIN 
+        WANDS_PROPERTY ON WANDS.CODE = WANDS_PROPERTY.CODE
+) WMN
+ON 
+    WMN.WAG = MN.AG AND WMN.WCN = MN.CN
+WHERE 
+    WMN.IE = 0
+ORDER BY 
+    MN.PWR DESC, 
+    MN.AG DESC;

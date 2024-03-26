@@ -1,0 +1,27 @@
+WITH num_ch AS (
+  SELECT h.hacker_id, h.name, COUNT(c.challenge_id) AS cch
+  FROM Hackers h
+  LEFT JOIN Challenges c ON h.hacker_id = c.hacker_id
+  GROUP BY h.hacker_id, h.name
+),
+max_ch AS
+(
+  SELECT MAX(num_ch.cch) AS mch 
+  FROM num_ch
+),
+one_ch AS
+(
+  SELECT num_ch.cch, COUNT(num_ch.hacker_id)
+  FROM num_ch
+  GROUP BY num_ch.cch
+  HAVING COUNT(num_ch.hacker_id) = 1
+)
+SELECT num_ch.hacker_id as hid, num_ch.name, num_ch.cch as ct
+FROM num_ch
+LEFT JOIN max_ch ON 1=1
+WHERE num_ch.cch = max_ch.mch
+UNION
+SELECT num_ch.hacker_id as hid, num_ch.name, num_ch.cch as ct
+FROM one_ch
+Left Join num_ch on one_ch.cch = num_ch.cch
+Order By ct DESC, hid;
